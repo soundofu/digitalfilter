@@ -50,5 +50,7 @@ void SignalFilterEverytime(void) {
 
 unsigned long SignalFilter(void) {
   signal_xor_result = signal_and_result ^ signal_or_result;
+  signal_and_result = 0xFFFFFFFF;
+  signal_or_result = 0x00000000;
   return (!signal_xor_result & signal_or_result);
 }
