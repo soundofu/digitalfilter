@@ -43,6 +43,26 @@ unsigned long signal_and_result = 0;
 unsigned long signal_or_result = 0;
 unsigned long signal_xor_result = 0;
 
+/**
+ * signal_and_result = A(n) & A(n-1) & A(n-2) & ...
+ * if any A(n) != 1, signal_and_result = 0;
+ * signal_or_result = A(n) | A(n-1) | A(n-2) | ...
+ * if any A(n) == 1, signal_or_result = 1.
+ * 
+ * INDEX      C1  C2  C3  C4
+ * A(n)       1   1   0   0
+ * A(n-1)     1   0   1   0
+ * A(n-2)     1   0   1   0
+ * A(n-3)     1   0   1   0
+ * A(n-4)     1   0   1   0
+ * -----------------------
+ * AND        1   0   0   0
+ * OR         1   1   1   0
+ * XOR        0   1   1   0   Noise or signal change
+ * !XOR       1   0   0   1
+ * !XOR & OR  1   0   0   0
+ */
+
 void SignalFilterEverytime(void) {
   signal_and_result &= signal_all_32.all;
   signal_or_result |= signal_all_32.all;
