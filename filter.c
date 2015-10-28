@@ -41,7 +41,7 @@ typedef union {
   unsigned long all;
 }SIGNAL;
 
-SIGNAL signal_all_32 = {0};
+SIGNAL input_raw = {0};
 
 unsigned long signal_and_result = 0;
 unsigned long signal_or_result = 0;
@@ -83,12 +83,11 @@ unsigned long signal_xor_result = 0;
  */
 
 void SignalFilterEverytime(void) {
-  signal_and_result &= signal_all_32.all;
-  signal_or_result |= signal_all_32.all;
+  signal_and_result &= input_raw.all;
+  signal_or_result |= input_raw.all;
 }
 
-unsigned long last_result = 0;
-unsigned long this_result = 0;
+SIGNAL output = {0};
 unsigned long SignalFilter(unsigned long last) {
   unsigned long tmp_result;
   signal_xor_result = signal_and_result ^ signal_or_result;
@@ -100,8 +99,8 @@ unsigned long SignalFilter(unsigned long last) {
 
 #define FILTER_CONST  20
 void UpdateSignal(void) {
-  signal_all_32.bit.signal_0 = 1;
-  signal_all_32.bit.signal_1 = 1;
+  input_raw.bit.signal_0 = 1;
+  input_raw.bit.signal_1 = 1;
 }
 void main(void) {
   int i=0;
@@ -111,8 +110,7 @@ void main(void) {
     SignalFilterEverytime();
     if (i >= FILTER_CONST) {
       i = 0;
-      this_result = SignalFilter(last_result);
-      last_result = this_result;          // save for next time
+      output.all = SignalFilter(output.all);
     }
   }
 }
